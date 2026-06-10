@@ -1,0 +1,3 @@
+import { notFound,redirect } from "next/navigation";import { isValidObjectId } from "mongoose";import { requireAdmin } from "@/lib/auth";import { connectDB } from "@/lib/db";import { Ser } from "@/models/Ser";import SerForm from "@/components/SerForm";
+export const dynamic="force-dynamic";
+export default async function Editar({params}:{params:Promise<{id:string}>}){if(!await requireAdmin())redirect("/login");const{id}=await params;if(!isValidObjectId(id))notFound();await connectDB();const raw=await Ser.findById(id).lean();if(!raw)notFound();return <section className="section"><p className="eyebrow">Administración</p><h1>Editar personaje</h1><SerForm ser={JSON.parse(JSON.stringify(raw))}/></section>}
