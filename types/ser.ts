@@ -1,1 +1,1 @@
-export type SerData={_id:string;tipo:string;clase?:string;nombre_comun:string;nombre_real?:string;sexo?:string;pais_ciudad?:string;epoca_vida?:string;padres?:string[];poderes?:string[];biografia?:string;mision?:string;imagen?:string;video?:string};
+export type SerData={_id:string;tipo:string;clase?:string;nombre_comun:string;nombre_real?:string;sexo?:string;pais_ciudad?:string;epoca_vida?:string;padres?:string[];poderes?:string[];biografia?:string;mision?:string;imagen?:string;audio?:string;video?:string};

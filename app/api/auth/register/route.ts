@@ -16,7 +16,12 @@ export async function POST(request:NextRequest){
     const response=NextResponse.json({user:payload},{status:201});
     response.cookies.set("session",await createToken(payload),sessionCookieOptions(request));
     return response;
-  }catch{
-    return NextResponse.json({message:"No se pudo crear la cuenta. Ese nombre de usuario podría estar ocupado."},{status:400});
+  }catch(cause){
+    const error=cause as {code?:number;keyPattern?:Record<string,number>};
+    if(error.code===11000&&error.keyPattern?.username){
+      return NextResponse.json({message:"Ese nombre de usuario ya está ocupado."},{status:409});
+    }
+    console.error("Error al registrar usuario:",cause);
+    return NextResponse.json({message:"No se pudo crear la cuenta por un error del servidor."},{status:500});
   }
 }
