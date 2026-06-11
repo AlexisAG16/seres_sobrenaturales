@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect,useState } from "react";
+import { useState } from "react";
 import FavoritesModal from "@/components/FavoritesModal";
 
 const links=[["/","Inicio"],["/seres","Archivo"],["/historia","Historia"],["/acerca","Acerca"],["/cuenta","Cuenta"]];
@@ -10,8 +10,6 @@ const links=[["/","Inicio"],["/seres","Archivo"],["/historia","Historia"],["/ace
 export default function SiteHeader(){
   const pathname=usePathname();
   const[open,setOpen]=useState(false);
-
-  useEffect(()=>setOpen(false),[pathname]);
 
   return <header className="site-header">
     <Link href="/" className="brand">Archivo <span>Sobrenatural</span></Link>
@@ -21,7 +19,7 @@ export default function SiteHeader(){
     <nav id="main-navigation" className={open?"main-nav open":"main-nav"} aria-label="Navegación principal">
       {links.map(([href,label])=>{
         const active=href==="/"?pathname===href:pathname.startsWith(href);
-        return <Link key={href} href={href} className={active?"active":undefined} aria-current={active?"page":undefined}>{label}</Link>;
+        return <Link key={href} href={href} className={active?"active":undefined} aria-current={active?"page":undefined} onClick={()=>setOpen(false)}>{label}</Link>;
       })}
       <FavoritesModal/>
     </nav>

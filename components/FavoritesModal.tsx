@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,7 +26,10 @@ export default function FavoritesModal(){
     }finally{setLoading(false)}
   }
 
-  useEffect(()=>{load()},[pathname]);
+  useEffect(()=>{
+    const timer=window.setTimeout(()=>void load(),0);
+    return()=>window.clearTimeout(timer);
+  },[pathname]);
   useEffect(()=>{
     const sync=()=>load();
     const clearSession=()=>{
@@ -42,7 +46,6 @@ export default function FavoritesModal(){
   },[]);
   useEffect(()=>{
     if(!open)return;
-    load();
     const close=(event:KeyboardEvent)=>{if(event.key==="Escape")setOpen(false)};
     document.addEventListener("keydown",close);
     document.body.classList.add("modal-open");

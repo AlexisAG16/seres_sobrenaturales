@@ -4,11 +4,13 @@ import { requireAdmin } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import "@/models/Ser";
+type Favorite={nombre_comun:string;tipo:string;clase?:string};
+type FavoriteUser={username:string;favoritos:Favorite[];updatedAt:Date};
 
 export async function GET(){
   if(!await requireAdmin())return NextResponse.json({message:"No autorizado."},{status:401});
   await connectDB();
-  const users=await User.find({rol:"user"}).select("username rol favoritos updatedAt").populate("favoritos","nombre_comun tipo clase").sort({username:1}).lean();
+  const users=await User.find({rol:"user"}).select("username rol favoritos updatedAt").populate("favoritos","nombre_comun tipo clase").sort({username:1}).lean() as unknown as FavoriteUser[];
   const workbook=new ExcelJS.Workbook();
   workbook.creator="Vampire";
   workbook.created=new Date();
@@ -22,7 +24,7 @@ export async function GET(){
     {header:"Actualizado",key:"updatedAt",width:22},
   ];
   for(const user of users){
-    const favorites=user.favoritos as any[];
+    const favorites=user.favoritos;
     if(favorites.length)for(const favorite of favorites)sheet.addRow({username:user.username,cantidad:favorites.length,ser:favorite.nombre_comun,tipo:favorite.tipo,clase:String(favorite.clase||"").replaceAll("_"," "),updatedAt:user.updatedAt});
     else sheet.addRow({username:user.username,cantidad:0,ser:"Sin favoritos",tipo:"",clase:"",updatedAt:user.updatedAt});
   }
