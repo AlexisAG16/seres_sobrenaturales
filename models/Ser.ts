@@ -7,6 +7,7 @@ const schema = new Schema({
   sexo:{type:String,enum:["Masculino","Femenino","LGTBQ+"]},pais_ciudad:String,epoca_vida:String,
   padres:{type:[String],default:[]},poderes:{type:[String],default:[]},biografia:String,mision:String,imagen:String,audio:String,video:String,
 },{timestamps:true,collection:"seres"});
+schema.index({nombre_comun:1},{unique:true,collation:{locale:"es",strength:2},name:"nombre_comun_unique_ci"});
 
 // Next.js conserva modelos compilados durante el hot reload. Si el servidor
 // tenía el esquema anterior, Mongoose descartaba el nuevo campo de audio.

@@ -39,6 +39,11 @@ export default function SerForm({ser}:{ser?:SerData}){
     setError("");
     try{
       const form=new FormData(event.currentTarget);
+      const nameParams=new URLSearchParams({name:commonName.trim()});
+      if(ser?._id)nameParams.set("id",ser._id);
+      const nameResponse=await fetch(`/api/seres/check-name?${nameParams}`);
+      const nameResult=await nameResponse.json();
+      if(!nameResponse.ok)throw new Error(nameResult.message||"Ese nombre común no está disponible.");
       let imagePath=ser?.imagen||"";
       let audioPath=ser?.audio||"";
       let videoPath=ser?.video||"";

@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import "@/models/Ser";
@@ -8,7 +8,9 @@ type Favorite={nombre_comun:string;tipo:string;clase?:string};
 type FavoriteUser={username:string;favoritos:Favorite[];updatedAt:Date};
 
 export async function GET(){
-  if(!await requireAdmin())return NextResponse.json({message:"No autorizado."},{status:401});
+  const user=await requireUser();
+  if(!user)return NextResponse.json({message:"Debes iniciar sesión."},{status:401});
+  if(user.rol!=="admin")return NextResponse.json({message:"Solo el administrador puede exportar este informe."},{status:403});
   await connectDB();
   const users=await User.find({rol:"user"}).select("username rol favoritos updatedAt").populate("favoritos","nombre_comun tipo clase").sort({username:1}).lean() as unknown as FavoriteUser[];
   const workbook=new ExcelJS.Workbook();

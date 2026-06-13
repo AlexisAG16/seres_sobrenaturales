@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir,writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextRequest,NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 
 export const runtime="nodejs";
 
@@ -28,7 +28,9 @@ const allowed={
 } as const;
 
 export async function POST(request:NextRequest){
-  if(!await requireAdmin())return NextResponse.json({message:"No autorizado."},{status:401});
+  const user=await requireUser();
+  if(!user)return NextResponse.json({message:"Debes iniciar sesión."},{status:401});
+  if(user.rol!=="admin")return NextResponse.json({message:"Solo el administrador puede subir archivos."},{status:403});
   try{
     const form=await request.formData();
     const file=form.get("file");

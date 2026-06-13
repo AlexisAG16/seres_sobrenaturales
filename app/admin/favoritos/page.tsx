@@ -12,7 +12,8 @@ type FavoriteUser={_id:unknown;username:string;rol:string;favoritos:Favorite[]};
 
 export default async function AdminFavoritos(){
   const session=await currentUser();
-  if(session?.rol!=="admin")redirect("/cuenta");
+  if(!session)redirect("/login?next=/admin/favoritos");
+  if(session.rol!=="admin")redirect("/cuenta");
   await connectDB();
   const users=await User.find({rol:"user"})
     .select("username rol favoritos updatedAt")
